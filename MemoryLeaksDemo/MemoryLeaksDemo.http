@@ -1,0 +1,6 @@
+@MemoryLeaksDemo_HostAddress = http://localhost:5270
+
+GET {{MemoryLeaksDemo_HostAddress}}/leak/
+Accept: application/json
+
+###
