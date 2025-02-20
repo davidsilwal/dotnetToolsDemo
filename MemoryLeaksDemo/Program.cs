@@ -1,3 +1,5 @@
+using JetBrains.Profiler.Api;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -18,10 +20,18 @@ var list = new List<string>();
 
 app.MapGet("/leak", () =>
 {
+    MemoryProfiler.CollectAllocations(true);
+    MemoryProfiler.GetSnapshot("Before Loops");
+
     for (var i = 0; i < 1000; i++)
     {
         list.Add(new string('a', 1000));
     }
+
+    MemoryProfiler.GetSnapshot("After Loops");
+    MemoryProfiler.CollectAllocations(false);
+
+    MemoryProfiler.Detach();
 
     return "Leaked!";
 });
