@@ -1,6 +1,11 @@
-@MemoryLeaksDemo_HostAddress = http://localhost:5270
+@MemoryLeaksDemo_HostAddress = http://localhost:8080
 
-GET {{MemoryLeaksDemo_HostAddress}}/leak/
+GET {{MemoryLeaksDemo_HostAddress}}/inefficient/
+Accept: application/json
+
+###
+
+GET {{MemoryLeaksDemo_HostAddress}}/efficient/
 Accept: application/json
 
 ###

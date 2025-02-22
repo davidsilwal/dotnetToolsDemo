@@ -21,10 +21,10 @@ FROM base AS final
 WORKDIR /app
 
 RUN apt-get update -y && apt-get install -y wget && \
-    wget -O dotMemoryclt.zip https://www.nuget.org/api/v2/package/JetBrains.dotMemory.Console.linux-x64 && \
+    wget -O dotTraceclt.zip https://www.nuget.org/api/v2/package/JetBrains.dotTrace.CommandLineTools.linux-x64 && \
     apt-get install -y unzip && \
-    unzip dotMemoryclt.zip -d ./dotMemoryclt && \
-    chmod +x -R dotMemoryclt/* 
+    unzip dotTraceclt.zip -d ./dotTrace && \
+    chmod +x -R dotTrace/*
 
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "MemoryLeaksDemo.dll"]

@@ -1,3 +1,4 @@
+using System.Text;
 using JetBrains.Profiler.Api;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +9,6 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -16,24 +16,67 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-var list = new List<string>();
 
-app.MapGet("/leak", () =>
+app.MapGet("/inefficient", () =>
 {
-    MemoryProfiler.CollectAllocations(true);
-    MemoryProfiler.GetSnapshot("Before Loops");
+    // Start collecting profiling data
+    MeasureProfiler.StartCollectingData();
 
-    for (var i = 0; i < 1000; i++)
-    {
-        list.Add(new string('a', 1000));
-    }
+    // Simulate some work with a performance bottleneck
+    string result = SimulateWorkInefficiently();
 
-    MemoryProfiler.GetSnapshot("After Loops");
-    MemoryProfiler.CollectAllocations(false);
+    // Stop collecting data and save the snapshot
+    MeasureProfiler.StopCollectingData();
 
-    MemoryProfiler.Detach();
+    MeasureProfiler.SaveData();
+    
+    // MeasureProfiler.Detach();
 
-    return "Leaked!";
+    return Results.Text(result);
+});
+
+app.MapGet("/efficient", () =>
+{
+    // Start collecting profiling data
+    MeasureProfiler.StartCollectingData();
+
+    // Simulate some work with a performance bottleneck
+    string result = SimulateWorkEfficiently();
+
+    // Stop collecting data and save the snapshot
+    MeasureProfiler.StopCollectingData();
+
+    MeasureProfiler.SaveData();
+
+    // MeasureProfiler.Detach();
+
+    return Results.Text(result);
 });
 
 app.Run();
+
+// Inefficient method with a performance bottleneck
+static string SimulateWorkInefficiently()
+{
+    string result = "";
+    for (int i = 0; i < 10000; i++)
+    {
+        // Inefficient string concatenation in a loop
+        result += i.ToString() + " ";
+    }
+
+    return result.Trim();
+}
+
+// Optimized method
+static string SimulateWorkEfficiently()
+{
+    // Use StringBuilder for efficient string manipulation
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < 10000; i++)
+    {
+        sb.Append(i.ToString()).Append(" ");
+    }
+
+    return sb.ToString().Trim();
+}
